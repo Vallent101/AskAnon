@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AskAnon - Anonymous Advice & Confessions</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AskAnon</h1>
+            <p class="subtitle">Share your questions and confessions anonymously. Get advice from the community.</p>
+        </header>
+
+        <div class="post-section">
+            <div class="post-form">
+                <h2>Post Your Question or Confession</h2>
+                <textarea 
+                    id="questionInput" 
+                    placeholder="What's on your mind? Ask for advice or share a confession..."
+                    rows="4"
+                ></textarea>
+                <button id="postBtn" class="btn-primary">Post Anonymously</button>
+            </div>
+        </div>
+
+        <div class="questions-section">
+            <h2>Recent Questions & Confessions</h2>
+            <div id="questionsContainer" class="questions-container">
+                <div class="loading">Loading questions...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, push, onValue, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        
+        // Firebase configuration - Replace with your own config
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            databaseURL: "YOUR_DATABASE_URL",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Check if Firebase is properly configured
+        const isFirebaseConfigured = firebaseConfig.apiKey && 
+                                     firebaseConfig.apiKey !== "YOUR_API_KEY" &&
+                                     firebaseConfig.databaseURL &&
+                                     firebaseConfig.databaseURL !== "YOUR_DATABASE_URL";
+
+        if (isFirebaseConfigured) {
+            try {
+                // Initialize Firebase
+                const app = initializeApp(firebaseConfig);
+                const database = getDatabase(app);
+
+                // Make Firebase available globally
+                window.firebaseApp = app;
+                window.firebaseDatabase = database;
+                window.firebaseRef = ref;
+                window.firebasePush = push;
+                window.firebaseOnValue = onValue;
+                window.firebaseServerTimestamp = serverTimestamp;
+                window.firebaseEnabled = true;
+            } catch (error) {
+                console.error('Firebase initialization error:', error);
+                window.firebaseEnabled = false;
+            }
+        } else {
+            console.log('Firebase not configured. Using localStorage fallback.');
+            window.firebaseEnabled = false;
+        }
+
+        // Signal that Firebase loading is complete
+        window.firebaseReady = true;
+        window.dispatchEvent(new Event('firebaseReady'));
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>
